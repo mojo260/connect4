@@ -4,26 +4,33 @@
     <meta charset="UTF-8">
     <title>Connect 4 - Home</title>
     <style>
+        /* Set background image and center content using flexbox */
         body {
             background: url('https://erasebg.org/media/uploads/wp2757874-wallpaper-gif.gif') no-repeat center center fixed;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center;     /* Center items horizontally */
+            justify-content: center; /* Center items vertically */
+            height: 100vh;           /* Full viewport height */
             font-family: Arial, sans-serif;
             margin: 0;
         }
+
+        /* Style for the main title */
         h1 {
             font-size: 48px;
             color: #ffffff;
             margin-bottom: 50px;
         }
+
+        /* Container for game mode buttons */
         .button-container {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 20px;              /* Space between buttons */
         }
+
+        /* Style for each button */
         .game-button {
             font-size: 24px;
             padding: 15px 40px;
@@ -34,6 +41,8 @@
             cursor: pointer;
             transition: 0.3s;
         }
+
+        /* Button hover effect */
         .game-button:hover {
             background-color: #005bb5;
         }
@@ -41,8 +50,10 @@
 </head>
 <body>
 
+<!-- Main title -->
 <h1>Connect 4</h1>
 
+<!-- Buttons to choose game mode or view rules -->
 <div class="button-container">
     <button class="game-button" onclick="location.href='/pvp'">Player vs Player</button>
     <button class="game-button" onclick="location.href='/pve'">Player vs AI</button>

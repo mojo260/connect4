@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Connect 4 - PvP</title>
     <style>
+        /* General body styling and background */
         body {
             background: url('https://erasebg.org/media/uploads/wp2757874-wallpaper-gif.gif') no-repeat center center fixed;
             background-size: cover;
@@ -13,12 +14,16 @@
             padding: 0;
             color: #fff;
         }
+
+        /* Page title styling */
         h1 {
             margin-top: 20px;
             font-size: 48px;
             color: #ffffff;
             text-shadow: 2px 2px 5px #000;
         }
+
+        /* Game board table styling */
         #board {
             margin: 20px auto;
             border-spacing: 10px;
@@ -27,28 +32,39 @@
             border-radius: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
         }
+
+        /* Game cells styling */
         td {
             width: 60px;
             height: 60px;
-            border-radius: 50%;
-            background-color: white;
+            border-radius: 50%;        /* Make each cell a circle */
+            background-color: white;   /* Default color */
             cursor: pointer;
             transition: transform 0.2s;
         }
+
+        /* Hover effect on cells */
         td:hover {
             transform: scale(1.1);
         }
+
+        /* Colors for each player's move */
         td.player1 {
             background-color: red;
         }
+
         td.player2 {
             background-color: yellow;
         }
+
+        /* Game status message styling */
         #message {
             font-size: 24px;
             margin-top: 20px;
             text-shadow: 1px 1px 3px #000;
         }
+
+        /* Button styling */
         #play-again, #home {
             margin: 10px;
             font-size: 18px;
@@ -61,16 +77,23 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             transition: background-color 0.3s, transform 0.2s;
         }
+
+        /* Button hover effect */
         #play-again:hover, #home:hover {
             background-color: #45a049;
             transform: scale(1.05);
         }
+
+        /* Initially hide the play again button */
         #play-again {
             display: none;
         }
+
+        /* Home button specific color and hover */
         #home {
             background-color: #0077ff;
         }
+
         #home:hover {
             background-color: #005fcc;
         }
@@ -78,49 +101,69 @@
 </head>
 <body>
 
+<!-- Page title -->
 <h1>Connect 4 (Player vs Player)</h1>
 
+<!-- Game board will be rendered here -->
 <table id="board"></table>
 
+<!-- Message area for win/draw announcements -->
 <div id="message"></div>
+
+<!-- Button to restart the game -->
 <button id="play-again" onclick="resetGame()">Play Again</button><br>
+
+<!-- Button to return to home screen -->
 <button id="home" onclick="location.href='/'">Home</button>
 
 <script>
-    const COLS = 7;
-    const ROWS = 6;
+    const COLS = 7;  // Number of columns
+    const ROWS = 6;  // Number of rows
+
+    // Create empty board (6x7 grid)
     let board = Array.from({ length: ROWS }, () => Array(COLS).fill(''));
-    let currentPlayer = 'player1';
+
+    let currentPlayer = 'player1'; // Start with player1 (Red)
     let gameOver = false;
 
+    // Render the board as an HTML table
     function renderBoard() {
         const table = document.getElementById('board');
-        table.innerHTML = '';
+        table.innerHTML = '';  // Clear existing table content
+
         for (let r = 0; r < ROWS; r++) {
             const row = table.insertRow();
             for (let c = 0; c < COLS; c++) {
                 const cell = row.insertCell();
                 if (board[r][c]) {
-                    cell.classList.add(board[r][c]);
+                    cell.classList.add(board[r][c]);  // Add class 'player1' or 'player2'
                 }
                 if (!gameOver) {
+                    // Add click event for each cell
                     cell.onclick = () => playerMove(c);
                 }
             }
         }
     }
 
+    // Handle a move from the current player
     function playerMove(col) {
         if (gameOver) return;
+
+        // Place the disc in the lowest available cell in the column
         for (let r = ROWS - 1; r >= 0; r--) {
             if (!board[r][col]) {
                 board[r][col] = currentPlayer;
                 break;
             }
         }
-        renderBoard();
+
+        renderBoard();  // Update the visual board
+
+        // Check for win or draw
         if (checkWin(currentPlayer)) {
-            document.getElementById('message').textContent = (currentPlayer === 'player1' ? "Red" : "Yellow") + " Wins!";
+            document.getElementById('message').textContent =
+                (currentPlayer === 'player1' ? "Red" : "Yellow") + " Wins!";
             document.getElementById('play-again').style.display = 'block';
             gameOver = true;
         } else if (isBoardFull()) {
@@ -128,50 +171,70 @@
             document.getElementById('play-again').style.display = 'block';
             gameOver = true;
         } else {
+            // Switch to the other player
             currentPlayer = (currentPlayer === 'player1') ? 'player2' : 'player1';
         }
     }
 
+    // Check for 4 connected discs in any direction
     function checkWin(player) {
-        // Horizontal
+        // Horizontal check
         for (let r = 0; r < ROWS; r++) {
             for (let c = 0; c < COLS - 3; c++) {
-                if (board[r][c] === player && board[r][c+1] === player && board[r][c+2] === player && board[r][c+3] === player) {
-                    return true;
-                }
+                if (
+                    board[r][c] === player &&
+                    board[r][c+1] === player &&
+                    board[r][c+2] === player &&
+                    board[r][c+3] === player
+                ) return true;
             }
         }
-        // Vertical
+
+        // Vertical check
         for (let c = 0; c < COLS; c++) {
             for (let r = 0; r < ROWS - 3; r++) {
-                if (board[r][c] === player && board[r+1][c] === player && board[r+2][c] === player && board[r+3][c] === player) {
-                    return true;
-                }
+                if (
+                    board[r][c] === player &&
+                    board[r+1][c] === player &&
+                    board[r+2][c] === player &&
+                    board[r+3][c] === player
+                ) return true;
             }
         }
-        // Diagonal \
+
+        // Diagonal (\) check
         for (let r = 0; r < ROWS - 3; r++) {
             for (let c = 0; c < COLS - 3; c++) {
-                if (board[r][c] === player && board[r+1][c+1] === player && board[r+2][c+2] === player && board[r+3][c+3] === player) {
-                    return true;
-                }
+                if (
+                    board[r][c] === player &&
+                    board[r+1][c+1] === player &&
+                    board[r+2][c+2] === player &&
+                    board[r+3][c+3] === player
+                ) return true;
             }
         }
-        // Diagonal /
+
+        // Diagonal (/) check
         for (let r = 3; r < ROWS; r++) {
             for (let c = 0; c < COLS - 3; c++) {
-                if (board[r][c] === player && board[r-1][c+1] === player && board[r-2][c+2] === player && board[r-3][c+3] === player) {
-                    return true;
-                }
+                if (
+                    board[r][c] === player &&
+                    board[r-1][c+1] === player &&
+                    board[r-2][c+2] === player &&
+                    board[r-3][c+3] === player
+                ) return true;
             }
         }
+
         return false;
     }
 
+    // Check if the board is completely filled
     function isBoardFull() {
         return board[0].every(cell => cell !== '');
     }
 
+    // Reset the game state to start over
     function resetGame() {
         board = Array.from({ length: ROWS }, () => Array(COLS).fill(''));
         currentPlayer = 'player1';
@@ -181,6 +244,7 @@
         renderBoard();
     }
 
+    // Initialize the game when the page loads
     renderBoard();
 </script>
 

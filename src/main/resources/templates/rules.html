@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Connect 4 Rules</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        h1 {
+            background-color: #005bb5;
+            color: #fff;
+            text-align: center;
+            padding: 30px 0;
+            margin: 0;
+            font-size: 36px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            font-size: 28px;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+
+        p, ul, ol {
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 0 20px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        ol, ul {
+            list-style-position: inside;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        ol {
+            margin-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .important-notes {
+            background-color: #ffecb3;
+            border-left: 5px solid #ffcc00;
+            padding: 20px;
+            margin-top: 30px;
+            font-style: italic;
+            font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-description {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 800px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .game-description p {
+            font-size: 20px;
+            color: #555;
+            margin: 0;
+        }
+
+        /* Hover effects */
+        h2:hover {
+            color: #ffcc00;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        li:hover {
+            background-color: #e6f7ff;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+<body>
+<h1>Connect 4 Rules</h1>
+<div class="button-container">
+    <button class="game-button" onclick="location.href='/pvp'">Player vs Player</button>
+    <button class="game-button" onclick="location.href='/pve'">Player vs AI</button>
+    <button class="game-button" onclick="location.href='/'">home</button>
+</div>
+<div class="game-description">
+    <p>Connect 4 is a two-player connection game in which the objective is to be the first to get four of your pieces in a row, either horizontally, vertically, or diagonally.</p>
+</div>
+
+<h2>Basic Gameplay</h2>
+<ol>
+    <li>The game is played on a grid of 7 columns and 6 rows.</li>
+    <li>Each player takes turns dropping a piece of their color (either red or yellow) into one of the columns.</li>
+    <li>A piece will fall to the lowest available slot in the chosen column.</li>
+    <li>The goal is to connect four of your pieces in a row, either horizontally, vertically, or diagonally.</li>
+</ol>
+
+<h2>Winning the Game</h2>
+<ul>
+    <p>The first player to connect four of their pieces in a row wins the game. The pieces can be connected in the following ways:</p>
+    <li>Horizontally: Four pieces in a horizontal line across the grid.</li>
+    <li>Vertically: Four pieces stacked in a vertical line.</li>
+    <li>Diagonally: Four pieces arranged diagonally in any direction.</li>
+</ul>
+
+<h2>Game End</h2>
+<ul>
+<p>If the grid is filled and no player has connected four pieces, the game is a draw.</p>
+</ul>
+<h2>Important Notes</h2>
+<div class="important-notes">
+    <ul>
+        <li>Players cannot move a piece once it has been dropped into a column.</li>
+        <li>Players should alternate turns and cannot skip their turn.</li>
+    </ul>
+</div>
+</body>
+</html>

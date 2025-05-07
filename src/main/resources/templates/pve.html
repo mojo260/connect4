@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Connect 4</title>
+    <style>
+        body {
+            background: url('https://erasebg.org/media/uploads/wp2757874-wallpaper-gif.gif') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+        h1 {
+            margin-top: 20px;
+            font-size: 48px;
+            color: #ffffff;
+            text-shadow: 2px 2px 5px #000;
+        }
+        #board {
+            margin: 20px auto;
+            border-spacing: 10px;
+            background-color: rgba(0, 85, 170, 0.8); /* semi-transparent blue */
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+        td {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: white;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        td:hover {
+            transform: scale(1.1);
+        }
+        td.player {
+            background-color: red;
+        }
+        td.ai {
+            background-color: yellow;
+        }
+        #message {
+            font-size: 24px;
+            margin-top: 20px;
+            text-shadow: 1px 1px 3px #000;
+        }
+        #play-again, #home-button {
+            margin: 10px;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: #005bb5;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        #play-again:hover, #home-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #play-again {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Connect 4</h1>
+<button id="home-button" onclick="window.location.href='/'">Home</button>
+<table id="board"></table>
+<div id="message"></div>
+<button id="play-again" onclick="resetGame()">Play Again</button>
+
+<script>
+    const COLS = 7;
+    let board = [];
+    let gameOver = false;
+
+    function renderBoard() {
+        const table = document.getElementById('board');
+        table.innerHTML = '';
+        for (let r = 0; r < board.length; r++) {
+            const row = table.insertRow();
+            for (let c = 0; c < COLS; c++) {
+                const cell = row.insertCell();
+                if (board[r][c] === 'P') {
+                    cell.classList.add('player');
+                } else if (board[r][c] === 'A') {
+                    cell.classList.add('ai');
+                }
+                if (!gameOver) {
+                    cell.onclick = () => playerMove(c);
+                }
+            }
+        }
+    }
+
+    async function fetchBoard() {
+        const res = await fetch('http://localhost:8080/pve/board');
+        board = await res.json();
+        renderBoard();
+    }
+
+    async function checkStatus() {
+        const res = await fetch('http://localhost:8080/pve/check-status');
+        const status = await res.text();
+        if (status !== 'Ongoing') {
+            gameOver = true;
+            document.getElementById('message').textContent = status;
+            document.getElementById('play-again').style.display = 'block';
+        }
+    }
+
+    async function playerMove(col) {
+        if (gameOver) return;
+        await fetch('http://localhost:8080/pve/player-move', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ col })
+        });
+        await fetchBoard();
+        await checkStatus();
+        if (!gameOver) {
+            await aiMove();
+        }
+    }
+
+    async function aiMove() {
+        await fetch('http://localhost:8080/pve/ai-move');
+        await fetchBoard();
+        await checkStatus();
+    }
+
+    async function resetGame() {
+        gameOver = false;
+        document.getElementById('message').textContent = '';
+        document.getElementById('play-again').style.display = 'none';
+        await fetch('http://localhost:8080/pve/new-game', { method: 'POST' });
+        await fetchBoard();
+    }
+
+    resetGame();
+</script>
+</body>
+</html>

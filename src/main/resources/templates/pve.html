@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Connect 4</title>
     <style>
-        /* Set up background, font, and general styling */
         body {
             background: url('https://erasebg.org/media/uploads/wp2757874-wallpaper-gif.gif') no-repeat center center fixed;
             background-size: cover;
@@ -15,7 +14,6 @@
             color: #fff;
         }
 
-        /* Title styling */
         h1 {
             margin-top: 20px;
             font-size: 48px;
@@ -23,50 +21,43 @@
             text-shadow: 2px 2px 5px #000;
         }
 
-        /* Game board container */
         #board {
             margin: 20px auto;
             border-spacing: 10px;
-            background-color: rgba(0, 85, 170, 0.8); /* semi-transparent blue background */
+            background-color: rgba(0, 85, 170, 0.8);
             padding: 10px;
             border-radius: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
         }
 
-        /* Each cell (slot) on the board */
         td {
             width: 60px;
             height: 60px;
-            border-radius: 50%; /* make it a circle */
+            border-radius: 50%;
             background-color: white;
             cursor: pointer;
             position: relative;
             transition: transform 0.2s;
         }
 
-        /* Scale cell on hover */
         td:hover {
             transform: scale(1.1);
         }
 
-        /* Player's disc (red) */
         td.player {
             background-color: red;
         }
 
-        /* AI's disc (yellow) */
         td.ai {
             background-color: yellow;
         }
 
-        /* Status message styling */
         #message {
             font-size: 24px;
             margin-top: 20px;
             text-shadow: 1px 1px 3px #000;
         }
 
-        /* Buttons for home and replay */
         #play-again, #home-button {
             margin: 10px;
             font-size: 18px;
@@ -80,57 +71,77 @@
             transition: background-color 0.3s, transform 0.2s;
         }
 
-        /* Button hover effect */
         #play-again:hover, #home-button:hover {
             background-color: #45a049;
             transform: scale(1.05);
         }
 
-        /* Hide play again button by default */
         #play-again {
             display: none;
+        }
+
+        #turn-choice h2 {
+            margin-top: 30px;
+        }
+
+        #turn-choice button {
+            margin: 10px;
+            font-size: 20px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            background-color: #007acc;
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        #turn-choice button:hover {
+            background-color: #339933;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
 
-<!-- Title and Home button -->
 <h1>Connect 4</h1>
 <button id="home-button" onclick="window.location.href='/'">Home</button>
 
-<!-- Game board -->
-<table id="board"></table>
+<!-- Turn order selection -->
+<div id="turn-choice">
+    <h2>Do you want to go first or second?</h2>
+    <button onclick="startGame('first')">Go First</button>
+    <button onclick="startGame('second')">Go Second</button>
+</div>
 
-<!-- Message display (win/lose/draw) -->
-<div id="message"></div>
-
-<!-- Play again button -->
-<button id="play-again" onclick="resetGame()">Play Again</button>
+<!-- Game elements (initially hidden) -->
+<div id="game-container" style="display: none;">
+    <table id="board"></table>
+    <div id="message"></div>
+    <button id="play-again" onclick="resetGame()">Play Again</button>
+</div>
 
 <script>
-    // Define number of columns and initialize board state
     const COLS = 7;
     let board = [];
     let gameOver = false;
 
-    // Renders the game board dynamically based on `board` array
     function renderBoard() {
         const table = document.getElementById('board');
-        table.innerHTML = ''; // Clear current board
+        table.innerHTML = '';
 
         for (let r = 0; r < board.length; r++) {
             const row = table.insertRow();
             for (let c = 0; c < COLS; c++) {
                 const cell = row.insertCell();
 
-                // Apply player/AI classes to color discs
                 if (board[r][c] === 'P') {
                     cell.classList.add('player');
                 } else if (board[r][c] === 'A') {
                     cell.classList.add('ai');
                 }
 
-                // Add click handler if game is not over
                 if (!gameOver) {
                     cell.onclick = () => playerMove(c);
                 }
@@ -138,19 +149,16 @@
         }
     }
 
-    // Fetch current board state from backend and update display
     async function fetchBoard() {
         const res = await fetch('http://localhost:8080/pve/board');
         board = await res.json();
         renderBoard();
     }
 
-    // Check game status from backend (Ongoing, Player wins, AI wins, Draw)
     async function checkStatus() {
         const res = await fetch('http://localhost:8080/pve/check-status');
         const status = await res.text();
 
-        // If game ended, show message and "Play Again" button
         if (status !== 'Ongoing') {
             gameOver = true;
             document.getElementById('message').textContent = status;
@@ -158,47 +166,56 @@
         }
     }
 
-    // Handle player's move
     async function playerMove(col) {
         if (gameOver) return;
 
-        // Send player's move to backend
         await fetch('http://localhost:8080/pve/player-move', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ col })
         });
 
-        // Update board and check game status
         await fetchBoard();
         await checkStatus();
 
-        // Trigger AI move if game not over
         if (!gameOver) {
             await aiMove();
         }
     }
 
-    // Request AI to make a move
     async function aiMove() {
         await fetch('http://localhost:8080/pve/ai-move');
         await fetchBoard();
         await checkStatus();
     }
 
-    // Start a new game
-    async function resetGame() {
+    async function startGame(order) {
         gameOver = false;
         document.getElementById('message').textContent = '';
         document.getElementById('play-again').style.display = 'none';
+        document.getElementById('turn-choice').style.display = 'none';
+        document.getElementById('game-container').style.display = 'block';
 
-        // Notify backend to reset game
-        await fetch('http://localhost:8080/pve/new-game', { method: 'POST' });
-        await fetchBoard(); // Render new empty board
+        await fetch('http://localhost:8080/pve/new-game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order })
+        });
+
+        await fetchBoard();
+
+        if (order === 'second') {
+            await aiMove();
+        }
     }
 
-    // Start the game on page load
-    resetGame();
+    function resetGame() {
+        document.getElementById('turn-choice').style.display = 'block';
+        document.getElementById('game-container').style.display = 'none';
+    }
+
+    // Show turn choice on initial load
+    document.getElementById('turn-choice').style.display = 'block';
 </script>
 </body>
 </html>

@@ -12,6 +12,18 @@
             padding: 0;
             line-height: 1.6;
         }
+        #home-button, #pvp-button, #pve-button {
+            margin: 10px;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: #005bb5;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
         h1 {
             background-color: #005bb5;
@@ -101,9 +113,9 @@
 <body>
 <h1>Connect 4 Rules</h1>
 <div class="button-container">
-    <button class="game-button" onclick="location.href='/pvp'">Player vs Player</button>
-    <button class="game-button" onclick="location.href='/pve'">Player vs AI</button>
-    <button class="game-button" onclick="location.href='/'">home</button>
+    <button id="pvp-button" onclick="location.href='/pvp'">Player vs Player</button>
+    <button id="pve-button" onclick="location.href='/pve'">Player vs AI</button>
+    <button id="home-button" onclick="location.href='/'">home</button>
 </div>
 <div class="game-description">
     <p>Connect 4 is a two-player connection game in which the objective is to be the first to get four of your pieces in a row, either horizontally, vertically, or diagonally.</p>
